@@ -51,5 +51,33 @@ struct Parse {
 //        builder: GreenNodeBuilder<'static>,
 //        errors: Vec<String>,
 //    }
-//    Parse { green_node: GreenNode::new(rowan::SyntaxKind::from(ROOT)), errors: vec![]  }
+//
+//    enum SexpRes {
+//        Ok,
+//        Eof,
+//        RParen,
+//    }
+//
+//    impl Parser {
+//        fn parse(mut self) -> Parse {
+//            self.builder.start_node(Root.into());
+//            loop {
+//                match self.sexp() {
+//                    SexpRes::Eof => break,
+//                    SexpRes::RParen => {
+//                        self.builder.start_node(ERROR.into());
+//                        self.errors.push("unmatched `)".to_string());
+//                        self.bump();
+//                        self.builder.finish_node();
+//                    }
+//                    SexpRes::Ok => (),
+//                }
+//            }
+//
+//            self.skip_ws();
+//            self.builder.finish_node();
+//
+//            Parse { green_node: self.builder.finish(), errors: self.errors }
+//        }
+//    }
 //}
