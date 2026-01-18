@@ -34,3 +34,22 @@ impl rowan::Language for Lang {
         kind.into()
     }
 }
+
+use rowan::GreenNode;
+
+use rowan::GreenNodeBuilder;
+
+struct Parse {
+    green_node: GreenNode,
+    #[allow(unused)]
+    errors: Vec<String>,
+}
+
+//fn parse(text: &str) -> Parse {
+//    struct Parser {
+//        tokens: Vec<(SyntaxKind, String)>,
+//        builder: GreenNodeBuilder<'static>,
+//        errors: Vec<String>,
+//    }
+//    Parse { green_node: GreenNode::new(rowan::SyntaxKind::from(ROOT)), errors: vec![]  }
+//}
