@@ -2,8 +2,8 @@
 #[allow(non_camel_case_types)]
 #[repr(u16)]
 enum SyntaxKind {
-    L_Paren = 0,
-    R_Paren,
+    L_PAREN = 0,
+    R_PAREN,
     WORD,
     WHITESPACE,
     ERROR,
@@ -79,5 +79,65 @@ struct Parse {
 //
 //            Parse { green_node: self.builder.finish(), errors: self.errors }
 //        }
+//
+//        fn list(&mut self) {
+//            assert_eq!(self.current(), Some(L_Paren));
+//
+//            self.builder.start_node(LIST.into());
+//            self.bump();
+//            loop {
+//                match self.sexp() {
+//                    SexpRes::Eof => {
+//                        self.errors.push("expected `)`".to_string());
+//                        break;
+//                    }
+//                    SexpRes::RParen => {
+//                        self.bump();
+//                        break;
+//                    }
+//                    SexpRes::Ok => (),
+//                }
+//            }
+//            self.builder.finish_node();
+//        }
+//
+//        fn sexp(&mut self) -> SexpRes {
+//            self.skip_ws();
+//            let t = match self.current() {
+//                None => return SexpRes::Eof,
+//                Some(R_PAREN) => return SexpRes:RParen,
+//                Some(t) => t,
+//            }
+//            match t {
+//                L_PAREN => self.list(),
+//                WORD => {
+//                    self.builder.start_node(ATOM.into());
+//                    self.bump();
+//                    self.builder.finish_node();
+//                }
+//                ERROR => self.bump(),
+//                _ => unreachable!(),
+//            }
+//            SexpRes::Ok
+//        }
+//
+//        fn bump(&mut self) {
+//            let (kind, text) = self.tokens.pop().unwrap();
+//            self.builder.token(kind.into(), text.as_str());
+//        }
+//
+//        fn current(&self) -> Option<SyntaxKind> {
+//            self.tokens.last().map(|(kind, _)| *kind)
+//        }
+//
+//        fn skip_ws(&mut self) {
+//            while self.current() == Some(WHITESPACE) {
+//                self.bump()
+//            }
+//        }
 //    }
+//
+//    let mut tokens = lex(text);
+//    tokens.reverse();
+//    Parser { tokens, builder: GreenNodeBuilder::new(), errors: Vec::new() }.parse()
 //}
