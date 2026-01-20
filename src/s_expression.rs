@@ -141,3 +141,39 @@ struct Parse {
 //    tokens.reverse();
 //    Parser { tokens, builder: GreenNodeBuilder::new(), errors: Vec::new() }.parse()
 //}
+//
+//type SyntaxNode = rowan::SyntaxNode<Lang>;
+//
+//#[allow(unused)]
+//type SyntaxToken = rowan::SyntaxToken<Lang>;
+//
+//#[allow(unused)]
+//type SyntaxElement = rowan::NodeOrToken<SyntaxNode, SyntaxToken>;
+//
+//impl Parse {
+//    fn syntax(&self) -> SyntaxNode {
+//        SyntaxNode::new_root(self.green_node.clone())
+//    }
+//}
+//
+//macro_rules! ast_node {
+//    ($ast:ident, $kind:ident) => {
+//        #[derive(PartialEq, Eq, Hash)]
+//        #[repr(transparent)]
+//        struct $ast(SyntaxNode);
+//        impl $ast {
+//            #[allow(unused)]
+//            fn cast(node: SyntaxNode) -> Option<Self> {
+//                if node.kind() == $kind { Some(Self(node)) } else { None }
+//            }
+//        }
+//    }
+//}
+//
+//ast_node!(Root, ROOT);
+//ast_node!(List, LIST);
+//ast_node!(Atom, ATOM);
+//
+//#[derive(PartialEq, Eq, Hash)]
+//#[repr(transparent)]
+//struct Sexp(SyntaxNode);
