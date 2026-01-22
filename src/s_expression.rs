@@ -200,6 +200,81 @@ impl Sexp {
     }
 }
 
+impl Root {
+    fn sexps(&self) -> impl Iterator<Item = Sexp> + '_ {
+        self.0.children().filter_map(Sexp::cast)
+    }
+}
+
+enum Op {
+    Add,
+    Sub,
+    Div,
+    Mul,
+}
+
+impl Atom {
+    fn eval(&self) -> Option<i64> {
+        self.text().parse().ok()
+    }
+
+    fn as_op(&self) -> Option<Op> {
+        let op = match self.text().as_str() {
+            "+" => Op::Add,
+            "-" => Op::Sub,
+            "*" => Op::Mul,
+            "/" => Op::Div,
+            _ => return None,
+        };
+        Some(op)
+    }
+
+    fn text(&self) -> String {
+        match self.0.green().children().next() {
+            Some(rowan::NodeOrToken::Token(token)) => token.text().to_string(),
+            _ => unreachable!(),
+        }
+    }
+}
+
+impl List {
+    fn sexps(&self) -> impl Iterator<Item = Sexp> + '_ {
+        self.0.children().filter_map(Sexp::cast)
+    }
+
+    fn eval(&self) -> Option<i64> {
+        let op = match self.sexps().nth(0)?.kind() {
+            SexpKind::Atom(atom) => atom.as_op()?,
+            _ => return None,
+        };
+        let arg1 = self.sexps().nth(1)?.eval()?;
+        let arg2 = self.sexps().nth(2)?.eval()?;
+        let res = match op {
+            Op::Add => arg1 + arg2,
+            Op::Sub => arg1 - arg2,
+            Op::Mul => arg1 * arg2,
+            Op::Div if arg2 == 0 => return None,
+            Op::Div => arg1 / arg2,
+        };
+        Some(res)
+    }
+}
+
+impl Sexp {
+    fn eval(&self) -> Option<i64> {
+        match self.kind() {
+            SexpKind::Atom(atom) => atom.eval(),
+            SexpKind::List(list) => list.eval(),
+        }
+    }
+}
+
+impl Parse {
+    fn root(&self) -> Root {
+        Root::cast(self.syntax()).unwrap()
+    }
+}
+
 fn lex(text: &str) -> Vec<(SyntaxKind, String)> {
     fn tok(t: SyntaxKind) -> m_lexer::TokenKind {
         m_lexer::TokenKind(rowan::SyntaxKind::from(t).0)
