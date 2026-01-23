@@ -156,6 +156,34 @@ impl Parse {
     }
 }
 
+fn test_parser() {
+    let text = "(+ (* 15 2) 62)";
+    let node = parse(text).syntax();
+    assert_eq!(
+        format!("{:?}", node),
+        "ROOT@0..15"
+    );
+    assert_eq!(node.children().count(), 1);
+    let list = node.children().next().unwrap();
+    let children = list
+        .children_with_tokens()
+        .map(|child| format!("{:?}@{:?}", child.kind(), child.text_range()))
+        .collect::<Vec<_>>();
+    
+    assert_eq!(
+        children,
+        vec![
+            "L_PAREN@0..1".to_string(),
+            "ATOM@1..2".to_string(),
+            "WHITESPACE@2..3".to_string(),
+            "LIST@3..11".to_string(),
+            "WHITESPACE@11..12".to_string(),
+            "ATOM@12..14".to_string(),
+            "R_PAREN@14..15".to_string(),
+        ]
+    );
+}
+
 macro_rules! ast_node {
     ($ast:ident, $kind:ident) => {
         #[derive(PartialEq, Eq, Hash)]
