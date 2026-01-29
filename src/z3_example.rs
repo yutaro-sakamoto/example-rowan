@@ -22,8 +22,60 @@ pub fn solve_linear_equations() {
 
 }
 
+#[derive(Debug)]
+enum Atom {
+    Var(String),
+    Int(i64),
+}
+
+#[derive(Debug)]
+enum Arith {
+    Add(Box<Arith>, Box<Arith>),
+    Sub(Box<Arith>, Box<Arith>),
+    Mul(Box<Arith>, Box<Arith>),
+    Div(Box<Arith>, Box<Arith>),
+    Atom(Box<Atom>),
+}
+
+#[derive(Debug)]
+enum Comparison {
+    Eq(Box<Arith>, Box<Arith>),
+    Neq(Box<Arith>, Box<Arith>),
+    Lt(Box<Arith>, Box<Arith>),
+    Le(Box<Arith>, Box<Arith>),
+    Gt(Box<Arith>, Box<Arith>),
+    Ge(Box<Arith>, Box<Arith>),
+}
+
+#[derive(Debug)]
+enum BoolExpr {
+    True,
+    False,
+    Not(Box<BoolExpr>),
+    And(Box<BoolExpr>, Box<BoolExpr>),
+    Or(Box<BoolExpr>, Box<BoolExpr>),
+    Implies(Box<BoolExpr>, Box<BoolExpr>),
+    Comparison(Box<Comparison>),
+}
+
+#[derive(Debug)]
+enum Statement {
+    Let(String, Box<Arith>),
+    If(Box<BoolExpr>, Block, Block),
+}
+
+type Block = Vec<Statement>;
+
+fn example_program() -> Block {
+    vec![
+        Statement::Let("x".to_string(), Box::new(Arith::Atom(Box::new(Atom::Int(5))))),
+    ]
+}
+
 pub fn run_all_examples() {
     solve_linear_equations();
+    let program = example_program();
+    println!("Example program: {:?}", program);
     //solve_inequalities();
     //solve_boolean_formula();
     //optimization_example();
