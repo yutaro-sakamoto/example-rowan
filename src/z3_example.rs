@@ -22,13 +22,13 @@ pub fn solve_linear_equations() {
 
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 enum Atom {
     Var(String),
     Int(i64),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 enum Arith {
     Add(Box<Arith>, Box<Arith>),
     Sub(Box<Arith>, Box<Arith>),
@@ -37,7 +37,7 @@ enum Arith {
     Atom(Box<Atom>),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 enum Comparison {
     Eq(Box<Arith>, Box<Arith>),
     Neq(Box<Arith>, Box<Arith>),
@@ -47,7 +47,7 @@ enum Comparison {
     Ge(Box<Arith>, Box<Arith>),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 enum BoolExpr {
     True,
     False,
@@ -58,19 +58,52 @@ enum BoolExpr {
     Comparison(Box<Comparison>),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 enum Statement {
     Let(String, Box<Arith>),
     If(Box<BoolExpr>, Block, Block),
 }
 
+type StatementVisited<'a> = (&'a Statement, bool);
+
 type Block = Vec<Statement>;
+type ExecutionPoint<'a> = std::slice::Iter<'a, Statement>;
 
 fn example_program() -> Block {
     vec![
         Statement::Let("x".to_string(), Box::new(Arith::Atom(Box::new(Atom::Int(5))))),
     ]
 }
+
+enum PathBranch {
+    Then,
+    Else,
+    Finish,
+}
+
+fn forward_until_branch(execution_point: &mut ExecutionPoint) -> bool {
+    while let Some(statement) = execution_point.next() {
+        match statement {
+            Statement::If(_, _, _) => return true,
+            _ => continue,
+        }
+    }
+    false
+}
+
+fn init_visited_statements(statements: &Block) -> Vec<StatementVisited> {
+    statements.iter().map(|s| (s, false)).collect()
+}
+
+//fn find_paths_covers_all_edges(statements: Block) {
+//    let mut execution_point = statements.iter();
+//    let mut visited_statements = init_visited_statements(&statements);
+//    let mut path_queue: Vec<Vec<PathBranch>> = Vec::new();
+//
+//    while let Some(path) = path_queue.pop() {
+//
+//    }
+//}
 
 pub fn run_all_examples() {
     solve_linear_equations();
