@@ -136,26 +136,27 @@ fn find_paths_c0_coverage(execution_point: &mut ExecutionPoint) -> Vec<Vec<PathB
         match control_statement {
             Statement::If(_, block) => {
                 println!("Control Statement1: {:?}", control_statement);
-                let then_branches = find_paths_c0_coverage(&mut block.iter().clone())
-                    .into_iter()
-                    .map(|mut path| {
-                        let mut new_path = vec![PathBranch::Then];
-                        new_path.append(&mut path);
-                        new_path
-                    });
+                let then_branches =
+                    find_paths_c0_coverage(&mut block.iter())
+                        .into_iter()
+                        .map(|mut path| {
+                            let mut new_path = vec![PathBranch::Then];
+                            new_path.append(&mut path);
+                            new_path
+                        });
                 let paths = then_branches.collect::<Vec<_>>();
                 paths
             }
             Statement::IfElse(_, then_block, else_block) => {
                 println!("Control Statement2: {:?}", control_statement);
-                let then_branches = find_paths_c0_coverage(&mut then_block.iter().clone())
+                let then_branches = find_paths_c0_coverage(&mut then_block.iter())
                     .into_iter()
                     .map(|mut path| {
                         let mut new_path = vec![PathBranch::Then];
                         new_path.append(&mut path);
                         new_path
                     });
-                let else_branches = find_paths_c0_coverage(&mut else_block.iter().clone())
+                let else_branches = find_paths_c0_coverage(&mut else_block.iter())
                     .into_iter()
                     .map(|mut path| {
                         let mut new_path = vec![PathBranch::Else];
